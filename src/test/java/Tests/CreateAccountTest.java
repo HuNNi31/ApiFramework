@@ -1,6 +1,7 @@
 
 package Tests;
 
+import Actions.AccountActions;
 import ObjectData.RequestObject.RequestAccount;
 import ObjectData.ResponseObject.ResponseAccountGetSuccess;
 import ObjectData.ResponseObject.ResponseAccountSuccess;
@@ -18,6 +19,7 @@ public class CreateAccountTest {
     public String userId;
     public String token;
     public RequestAccount requestAccountBody;
+    public AccountActions accountActions;
 
     @Test
     public void testMethod(){
@@ -31,71 +33,41 @@ public class CreateAccountTest {
 
         System.out.println("Step 3: get new account");
         getSpecificAccount();
+        System.out.println();
+
+        System.out.println("Step 4: deleted new account");
+        deleteSpecificAccount();
+        System.out.println();
+
+        System.out.println("Step 5: re-check deleted account");
+        getSpecificAccount();
+        System.out.println();
     }
 
     public void createAccount(){
-        //define the client
-        RequestSpecification requestSpecification = RestAssured.given();
-        requestSpecification.baseUri("https://demoqa.com/");
-        requestSpecification.contentType("application/json");
 
-        //define the request
+        accountActions = new AccountActions();
         PropertyUtility propertyUtility = new PropertyUtility("RequestData/createAccountData");
         requestAccountBody = new RequestAccount(propertyUtility.getAllData());
-        requestSpecification.body(requestAccountBody);
-
-        //interaction with the response
-        Response response = requestSpecification.post("Account/v1/User");
-        System.out.println(response.getStatusCode());
-        Assert.assertEquals(response.getStatusCode(),201);
-        System.out.println(response.getStatusLine());
-
-        //validate response
-        ResponseAccountSuccess responseAccountBody = response.body().as(ResponseAccountSuccess.class);
-        System.out.println(responseAccountBody.getUserID());
+        ResponseAccountSuccess responseAccountBody = accountActions.createnewAccount(requestAccountBody);
         userId = responseAccountBody.getUserID();
-        Assert.assertEquals(responseAccountBody.getUsername(),requestAccountBody.getUserName());
+
     }
 
     public void generateToken(){
-        //define the client
-        RequestSpecification requestSpecification = RestAssured.given();
-        requestSpecification.baseUri("https://demoqa.com/");
-        requestSpecification.contentType("application/json");
 
-        requestSpecification.body(requestAccountBody);
-
-        //interaction with the response
-        Response response = requestSpecification.post("Account/v1/GenerateToken");
-        System.out.println(response.getStatusCode());
-        Assert.assertEquals(response.getStatusCode(),200);
-        System.out.println(response.getStatusLine());
-
-        //validate response
-        ResponseTokenSuccess responseTokenSuccess = response.body().as(ResponseTokenSuccess.class);
-        System.out.println(responseTokenSuccess.getToken());
+        ResponseTokenSuccess responseTokenSuccess = accountActions.generateToken(requestAccountBody);
         token = responseTokenSuccess.getToken();
 
-        Assert.assertEquals(responseTokenSuccess.getStatus(),"Success");
-        Assert.assertEquals(responseTokenSuccess.getResult(),"User authorized successfully.");
     }
 
     public void getSpecificAccount(){
 
-        //define the client
-        RequestSpecification requestSpecification = RestAssured.given();
-        requestSpecification.baseUri("https://demoqa.com/");
-        requestSpecification.contentType("application/json");
-        requestSpecification.header("Authorization", "Bearer " + token);
+        accountActions.getSpecificAccount(token, userId, requestAccountBody);
 
-        //interaction with the response
-        Response response = requestSpecification.get("Account/v1/User/" + userId);
-        System.out.println(response.getStatusCode());
-        Assert.assertEquals(response.getStatusCode(),200);
-        System.out.println(response.getStatusLine());
+    }
 
-        //validate response
-        ResponseAccountGetSuccess responseAccountGetSuccess = response.body().as(ResponseAccountGetSuccess.class);
-        Assert.assertEquals(responseAccountGetSuccess.getUsername(),requestAccountBody.getUserName());
+    public void deleteSpecificAccount(){
+        accountActions.deleteSpecificAccount(token, userId);
     }
 }
