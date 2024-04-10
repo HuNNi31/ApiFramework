@@ -23,7 +23,6 @@ public class AccountActions {
         Response response = accountServiceImp.createAccount(requestAccount);
         Assert.assertEquals(response.getStatusCode(), ResponseStatus.SC_CREATED);
         ResponseAccountSuccess responseAccountBody = response.body().as(ResponseAccountSuccess.class);
-        System.out.println(responseAccountBody.getUserID());
         Assert.assertEquals(responseAccountBody.getUsername(),requestAccount.getUserName());
         return responseAccountBody;
     }
