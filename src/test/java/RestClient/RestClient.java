@@ -4,6 +4,8 @@ import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import loggerUtility.LoggerUtility;
+import xmlFile.GeneralXml;
+import xmlFile.xmlNode.Configuration;
 
 public class RestClient {
 
@@ -11,10 +13,12 @@ public class RestClient {
     // am defacut doua actiuni:
     // 1. metoda care configureaza clientul
     // 2. metoda care returnaza un raspuns pe baza configurari de la client
-
+    // da :D
     private RequestSpecification prepareClient(RequestSpecification requestSpecification){
-        requestSpecification.baseUri("https://demoqa.com/");
-        requestSpecification.contentType("application/json");
+        Configuration configuration = GeneralXml.createConfig(Configuration.class);
+
+        requestSpecification.baseUri(configuration.backEndConfig.baseURL);
+        requestSpecification.contentType(configuration.backEndConfig.contentType);
         return requestSpecification;
     }
 

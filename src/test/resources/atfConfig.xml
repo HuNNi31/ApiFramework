@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <backEndConfig>
+        <baseURL>https://demoqa.com/</baseURL>
+        <contentType>application/json</contentType>
+    </backEndConfig>
+</configuration>

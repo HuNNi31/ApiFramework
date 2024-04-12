@@ -6,6 +6,8 @@ import io.restassured.internal.RequestSpecificationImpl;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import loggerUtility.LoggerUtility;
+import xmlFile.GeneralXml;
+import xmlFile.xmlNode.Configuration;
 
 import java.util.logging.Logger;
 
@@ -13,6 +15,7 @@ public class ServiceHelper {
 
     //metoda care sa logheze info despre request
     //--despre response
+    private static final Configuration configuration = GeneralXml.createConfig(Configuration.class);
 
     public static void requestLogs(RequestSpecification requestSpecification, String path, String methodType) {
         LoggerUtility.infoTest("====Request info====");
@@ -30,7 +33,7 @@ public class ServiceHelper {
     }
 
     private static String getRequestURL(String path) {
-        return "Request URI: https://demoqa.com/" + path;
+        return "Request URI: " + configuration.backEndConfig.baseURL + path;
     }
 
     private static String getRequestMethod(String methodType) {
